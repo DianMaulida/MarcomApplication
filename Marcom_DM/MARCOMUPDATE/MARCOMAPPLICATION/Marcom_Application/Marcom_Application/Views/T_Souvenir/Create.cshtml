@@ -1,0 +1,182 @@
+﻿@{
+    ViewBag.Title = "Create";
+    Layout = null;
+}
+
+<style type="text/css">
+    .labelfrm {
+        display: block;
+        font-size: small;
+        margin-top: 5px;
+    }
+
+    .error {
+        font-size: small;
+        color: red;
+        border-color: red;
+    }
+</style>
+@using (Html.BeginForm("CreateData", "T_Souvenir", FormMethod.Post, new { id = "create" }))
+{
+    <form>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="row">
+                    <br />
+                    <div class="col-lg-4">
+                        <label for="code" class="labelfrm">* Transaction Code</label>
+                    </div>
+                    <div class="col-lg-8">
+                        <input type="text" class="form-control" placeholder="Auto Generated" disabled />
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label for="name" class="labelfrm">* Received By</label>
+                    </div>
+                    <div class="col-lg-8">
+                        @Html.DropDownList("received_by", new SelectList(ViewBag.ListEmployee, "idemployee", "fullname"), "--Select Employee-- ( * )", new { @class = "form-control labelfrm" })
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label for="description" class="labelfrm">* Received Date</label>
+                    </div>
+                    <div class="col-lg-8">
+                        <input type="date" class="form-control" id="received_date" name="received_date" placeholder="Select Date" />
+                    </div>
+                </div>
+                <div class="row">
+                    <br />
+                    <div class="col-lg-4">
+                        <label for="code"> Note</label>
+                    </div>
+                    <div class="col-lg-8">
+                        <textarea type="text" class="form-control" placeholder="Type Note" name="notesouvenir" id="notesouvenir"></textarea>
+                    </div>
+                </div>
+                <br />
+            </div>
+        </div>
+       @*<div class="panel panel-default">
+        <div class="panel-body">
+            <button id="add_item" type="button" class="btn btn-primary">Add Item</button>
+            <br />
+            <br />
+            <!--kodingan zoni tes-->
+            <div class="row" style="padding-top:15px">
+                <label class="col-md-4">Souvenir Name</label>
+                <label class="col-md-2">Qty</label>
+                <label class="col-md-4">Note</label>
+            </div>
+            <div id="submissionDiv"></div>
+        </div>
+    </div>*@ 
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary cls_save" data-dissmiss="modal fade">Save</button>
+            <button type="button" class="btn btn-warning cls_cancel" data-dissmiss="modal fade">Cancel</button>
+        </div>
+    </form>
+}
+<script>
+    var counter = 0;
+    $(document).ready(function () {
+        $('<div class="row" id="divrow_' + counter + '" style="padding-top:10px">' +
+            '<div class="col-md-4" style="padding-right:5px">' +
+            //'<select id="m_name_' + counter + '" class="form-control" style="width:100%"><option value=0 class="input-group" typeof="text" selected>-Select Souvenir-</option></option>}</select>' +
+            '<input class="form-control" id="m_souvenir_id' + counter + '" placeholder="Souvenir Name" />' +
+            '</div>' +
+            '<div class="col-md-2" style="padding-right:5px">' +
+            '<input class="form-control" id="qty' + counter + '" placeholder="Qty" />' +
+            '</div>' +
+            '<div class="col-md-4" style="padding-right:20px">' +
+            '<input class="form-control" id="note' + counter + '" placeholder="Note" />' +
+            '</div>' +
+            '<div style="padding-right:5px">' +
+            '<span class="glyphicon glyphicon-pencil cls_delete"></span>' +
+            '<span class="glyphicon glyphicon-trash cls_delete" onclick="removeDiv(' + counter + ');"></span>' +
+            '</div>' +
+            '</div>').appendTo('#submissionDiv');
+        counter++;
+        return false;
+    });
+
+    $(function () {
+        $('#add_item').click(function () {
+            $('<div class="row" id="divrow_' + counter + '" style="padding-top:10px">' +
+                '<div class="col-md-4" style="padding-right:5px">' +
+                //'<select id="m_name_' + counter + '" class="form-control" style="width:100%"><option value=0 class="input-group" typeof="text" selected>-Select Souvenir-</option></option>}</select>' +
+                 '<input class="form-control" id="m_souvenir_item' + counter + '" placeholder="Souvenir Name" />' +
+                '</div>' +
+                '<div class="col-md-2" style="padding-right:5px">' +
+                '<input class="form-control" id="qty' + counter + '" placeholder="Qty" />' +
+                '</div>' +
+                '<div class="col-md-4" style="padding-right:20px">' +
+                '<input class="form-control" id="note' + counter + '" placeholder="Note" />' +
+                '</div>' +
+                '<div style="padding-right:5px">' +
+                '<span class="glyphicon glyphicon-pencil cls_delete"></span>' +
+                '<span class="glyphicon glyphicon-trash cls_delete" onclick="removeDiv(' + counter + ');"></span>' +
+                '</div>' +
+                '</div>').appendTo('#submissionDiv');
+            counter++;
+            return false;
+        });
+    });
+
+    function removeDiv(index) {
+        if (counter > 1) {
+            $('#divrow_' + index).remove();
+            counter--;
+        }
+        return false;
+    }
+    $("#create").validate({
+        rules: {
+            received_by: {
+                required: true
+            },
+            received_date: {
+                required: true
+            },
+        },
+        messages: {
+            received_by: {
+                required: "Received By tidak boleh kosong"
+            },
+            received_date: {
+                required: "Received Date tidak boleh kosong"
+            },
+        },
+        submitHandler: function (form) {
+            var dataForm = $(form).serialize();
+            $.ajax({
+                url: "@Url.Action("CreateData", "T_Souvenir")",
+                method: "post",
+                data: { datatransaksisouvenir: dataForm },
+                dataType: "json",
+                success: function (respon) {
+                    if (respon.respon) {
+                        $("#exampleModal").modal("hide");
+                        $(".cls_alert").show().html("<strong>Data Saved!</strong> New Company has been add with code " + "<strong>" + respon.respon + "</strong>" + "!");
+                        window.setTimeout(function () {
+                            $(".cls_alert").slideUp(500);
+                            //$("#exampleModal").modal("hide");
+                            window.location.reload();
+                        }, 3000);
+                    }
+                    else {
+                        alert(respon.respon);
+                    }
+                }
+            });
+        }
+    });
+
+    $(".cls_cancel").click(function () {
+        window.location.reload();
+        $("#exampleModal").modal("hide");
+    });
+</script>

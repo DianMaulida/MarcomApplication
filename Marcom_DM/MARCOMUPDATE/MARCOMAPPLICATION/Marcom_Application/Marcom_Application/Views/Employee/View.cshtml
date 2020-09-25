@@ -1,0 +1,84 @@
+﻿@model Marcom_Application.ViewModel.VMEmployee
+@{
+    ViewBag.Title = "Edit";
+    Layout = null;
+}
+
+<style type="text/css">
+    .labelfrm {
+        display: block;
+        font-size: small;
+        margin-top: 5px;
+    }
+
+    .error {
+        font-size: small;
+        color: red;
+        border-color: red;
+    }
+</style>
+
+@using (Html.BeginForm("View", "Employee", FormMethod.Post, new { id = "form_create" }))
+{
+    @Html.HiddenFor(a => a.id)
+    <form>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="col-lg-2">
+                    <label class="labelfrm">* Emp ID Number </label>
+                </div>
+                <div class="col-lg-4">
+                    <input type="text" class="form-control labelfrm" placeholder="Type Employee ID Number" name="employee_number" id="employee_number" value="@Model.employee_number" disabled />
+                </div>
+                <div class="col-lg-2">
+                    <label>* Company Name</label>
+                </div>
+                <div class="col-lg-4">
+                    @Html.DropDownList("m_company_id", new SelectList(ViewBag.ListJenisCompany, "id", "name"), "-Select Company Name- ( * )", new { @class = "form-control labelfrm", disabled = true })
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="col-lg-2">
+                    <label>First Name</label>
+                </div>
+                <div class="col-lg-4">
+                    <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Type First Name" value="@Model.first_name" disabled />
+                </div>
+                <div class="col-lg-2">
+                    <label>Email</label>
+                </div>
+                <div class="col-lg-4">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Type Email" value="@Model.email" disabled />
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="col-lg-2">
+                    <label>Last Name</label>
+                </div>
+                <div class="col-lg-4">
+                    <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Type Last Name" value="@Model.last_name" disabled />
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-warning cls_cancel" data-dissmiss="modal fade">Close</button>
+            </div>
+        </div>
+    </form>
+}
+<script>
+    //$("#m_unit_id").prop("disabled", true);
+    $(".cls_cancel").click(function () {
+        $("#exampleModal").modal("hide");
+        window.location.reload();
+    });
+</script>
+
+

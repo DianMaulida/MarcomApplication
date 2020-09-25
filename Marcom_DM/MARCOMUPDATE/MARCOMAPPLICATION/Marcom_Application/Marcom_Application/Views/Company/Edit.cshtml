@@ -1,0 +1,113 @@
+﻿@model Marcom_Application.Model.master_company
+@{
+    ViewBag.Title = "Edit";
+    Layout = null;
+}
+<style type="text/css">
+    .labelfrm {
+        display: block;
+        font-size: small;
+        margin-top: 5px;
+    }
+
+    .error {
+        font-size: small;
+        color: red;
+        border-color: red;
+    }
+</style>
+@using (Html.BeginForm("UpdateData", "Company", FormMethod.Post, new { id = "edit_company" }))
+{
+    @Html.HiddenFor(a => a.id)
+    <form>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="col-lg-2">
+                    <label>* Company Code</label>
+                </div>
+                <div class="col-lg-4">
+                    <input type="text" class="form-control" placeholder="Auto Generated" disabled value="@Model.code"/>
+                </div>
+                <div class="col-lg-2">
+                    <label>* Company Name</label>
+                </div>
+                <div class="col-lg-4">
+                    <input type="text" class="form-control" placeholder="Type Company Name" id="name" name="name" value="@Model.name" />
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="col-lg-2">
+                    <label>Email</label>
+                </div>
+                <div class="col-lg-4">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Type Email" value="@Model.email" />
+                </div>
+                <div class="col-lg-2">
+                    <label>Address</label>
+                </div>
+                <div class="col-lg-4">
+                    <textarea type="text" class="form-control" id="address" name="address" placeholder="Type Address" value="@Model.address">@Model.address</textarea>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="col-lg-2">
+                    <label>Phone</label>
+                </div>
+                <div class="col-lg-4">
+                    <input type="number" class="form-control" id="phone" name="phone" placeholder="Type Phone" value="@Model.phone" />
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+                <button type="submit" class="btn btn-primary cls_save" data-dissmiss="modal fade">Update</button>
+                <button type="button" class="btn btn-warning cls_cancel" data-dissmiss="modal fade">Cancel</button>
+        </div>
+    </form>
+}
+
+<script>
+    $("#edit_company").validate({
+        rules: {
+            name: {
+                required: true
+            }
+        },
+        messages: {
+            name: {
+                required: "Name tidak boleh kosong"
+            },
+        },
+        submitHandler: function (form) {
+            var dataForm = $(form).serialize();
+            $.ajax({
+                url: "@Url.Action("UpdateData", "Company")",
+                method: "post",
+                data: dataForm,
+                dataType: "json",
+                success: function (respon) {
+                    if (respon.respon) {
+                        $("#exampleModal").modal("hide");
+                        $(".cls_alert").show().html("<strong>Data Updated!</strong> Data Company has been Updated !");
+                        window.setTimeout(function () {
+                            $(".cls_alert").slideUp(500);
+                            window.location.reload();
+                        }, 3000);
+                    }
+                    else {
+                        alert(respon.reload);
+                    }
+                }
+            });
+        }
+    });
+    $(".cls_cancel").click(function () {
+        $("#exampleModal").modal("hide");
+        window.location.reload();
+    });
+</script>

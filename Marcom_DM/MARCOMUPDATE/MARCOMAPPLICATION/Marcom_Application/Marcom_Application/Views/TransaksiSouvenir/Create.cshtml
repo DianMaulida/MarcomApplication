@@ -1,0 +1,131 @@
+﻿@{
+    ViewBag.Title = "Create";
+    Layout = null;
+}
+<style type="text/css">
+    .labelfrm {
+        display: block;
+        font-size: small;
+        margin-top: 5px;
+    }
+
+    .error {
+        font-size: small;
+        color: red;
+        border-color: red;
+    }
+</style>
+@using (Html.BeginForm("CreateData", "TransaksiSouvenir", FormMethod.Post, new { id = "create" }))
+{
+    <form>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="row">
+                    <br />
+                    <div class="col-lg-4">
+                        <label for="code" class="labelfrm">* Transaction Code</label>
+                    </div>
+                    <div class="col-lg-8">
+                        <input type="text" class="form-control" placeholder="Auto Generated" disabled />
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label for="name" class="labelfrm">* Received By</label>
+                    </div>
+                    <div class="col-lg-8">
+                        @Html.DropDownList("received_by", new SelectList(ViewBag.ListEmployee, "idemployee", "fullname"), "--Select Employee-- ( * )", new { @class = "form-control labelfrm" })
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label for="description" class="labelfrm">* Received Date</label>
+                    </div>
+                    <div class="col-lg-8">
+                        <input type="date" class="form-control" id="received_date" name="received_date" placeholder="Select Date" />
+                    </div>
+                </div>
+                <div class="row">
+                    <br />
+                    <div class="col-lg-4">
+                        <label for="code"> Note</label>
+                    </div>
+                    <div class="col-lg-8">
+                        <textarea type="text" class="form-control" placeholder="Type Note" name="notesouvenir" id="notesouvenir"></textarea>
+                    </div>
+                </div>
+                <br />
+            </div>
+        </div>
+        @* <div class="panel panel-default">
+                <div class="panel-body">
+                    <button id="add_item" type="button" class="btn btn-primary">Add Item</button>
+                    <br />
+                    <br />
+                    <!--kodingan zoni tes-->
+                    <div class="row" style="padding-top:15px">
+                        <label class="col-md-4">Souvenir Name</label>
+                        <label class="col-md-2">Qty</label>
+                        <label class="col-md-4">Note</label>
+                    </div>
+                    <div id="submissionDiv"></div>
+                </div>
+            </div>*@
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary cls_save" data-dissmiss="modal fade">Save</button>
+            <button type="button" class="btn btn-warning cls_cancel" data-dissmiss="modal fade">Cancel</button>
+        </div>
+    </form>
+}
+<script>
+    $("#create").validate({
+        rules: {
+            received_by: {
+                required: true
+            },
+            received_date: {
+                required: true
+            }
+        },
+        messages: {
+            received_by: {
+                required: "Received By Tidak Boleh Kosong"
+            },
+            received_date: {
+                required: "Received Date Tidak Boleh Kosong"
+            },
+        },
+        submitHandler: function (form) {
+            debugger;
+            var dataForm = $(form).serialize();
+            $.ajax({
+                
+                url: "@Url.Action("CreateData", "TransaksiSouvenir")",
+                method: "post",
+                data: { datasouvenirtransaksi: dataForm },
+                dataType: "json",
+                success: function (respon) {
+                    //debugger;
+                    if (respon.respon) {
+                        $("#exampleModal").modal("hide");
+                        $(".cls_alert").show().html("<strong>Data Saved!</strong> New Transaction Souvenir has been add with code " + "<strong>" + respon.respon + "</strong>" + "!");
+                        window.setTimeout(function () {
+                            $(".cls_alert").slideUp(500);
+                            //$("#exampleModal").modal("hide");
+                            window.location.reload();
+                        }, 3000);
+                    }
+                    else {
+                        alert(respon.respon);
+                    }
+                }
+            });
+        }
+    });
+    $(".cls_cancel").click(function () {
+        window.location.reload();
+        $("#exampleModal").modal("hide");
+    });
+</script>

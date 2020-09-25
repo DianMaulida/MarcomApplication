@@ -1,0 +1,128 @@
+﻿
+@{
+    ViewBag.Title = "Create";
+    Layout = null;        
+}
+<style type="text/css">
+    .labelfrm {
+        display: block;
+        font-size: small;
+        margin-top: 5px;
+    }
+
+    .error {
+        font-size: small;
+        color: red;
+        border-color: red;
+    }
+</style>
+
+@using (Html.BeginForm("Create", "Employee", FormMethod.Post, new { id = "create_employee" }))
+{
+    <form>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="col-lg-2">
+                    <label class="labelfrm">* Emp ID Number </label>
+                </div>
+                <div class="col-lg-4">
+                    <input type="text" class="form-control labelfrm" placeholder="Type Employee ID Number" name="employee_number" id="employee_number" />
+                </div>
+                <div class="col-lg-2">
+                    <label>* Company Name</label>
+                </div>
+                <div class="col-lg-4">
+                    @Html.DropDownList("m_company_id", new SelectList(ViewBag.ListJenisCompany, "id", "name"), "-Select Company Name- ( * )", new { @class = "form-control labelfrm" })
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="col-lg-2">
+                    <label class="labelfrm">First Name</label>
+                </div>
+                <div class="col-lg-4">
+                    <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Type First Name" />
+                </div>
+                <div class="col-lg-2">
+                    <label>Email</label>
+                </div>
+                <div class="col-lg-4">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Type Email" />
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="col-lg-2">
+                    <label>Last Name</label>
+                </div>
+                <div class="col-lg-4">
+                    <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Type Last Name" />
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+                <button type="submit" class="btn btn-primary cls_save" data-dissmiss="modal fade">Save</button>
+                <button type="button" class="btn btn-warning cls_cancel" data-dissmiss="modal fade">Cancel</button>
+        </div>
+    </form>
+}
+<script>
+    $("#create_employee").validate({
+        rules: {
+            employee_number: {
+                required: true
+            },
+            first_name: {
+                required: true
+            },
+            m_company_id: {
+                required: true
+            },
+        },
+        messages: {
+            employee_number: {
+                required: "Employee Number tidak boleh kosong"
+            },
+            first_name:{
+                required: "First Name tidak boleh kosong"
+            },
+            m_company_id: {
+                required: "Company Name tidak boleh kosong"
+            },
+        },
+        submitHandler: function (form) {
+            var dataForm = $(form).serialize();
+            $.ajax({
+                url: "@Url.Action("CreateData", "Employee")",
+                method: "post",
+                data: dataForm,
+                dataType: "json",
+                success: function (respon) {
+                    if (respon.respon) {
+                        if (respon.respon) {
+                            $("#exampleModal").modal("hide");
+                            $(".cls_alert").show().html("<strong>Data Saved!</strong> New Employee has been add with code " + "<strong>" + respon.respon + "</strong>" + " !");
+                            window.setTimeout(function () {
+                                $(".cls_alert").slideUp(500);
+                                window.location.reload();
+                            }, 3000);
+                        }
+                        else {
+                            alert(respon.respon);
+                        }
+                    }
+                }
+            });
+        }
+    });
+    
+    $(".cls_cancel").click(function () {
+        $("#exampleModal").modal("hide");
+    });
+</script>
+
+
